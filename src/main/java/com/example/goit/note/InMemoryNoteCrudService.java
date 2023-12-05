@@ -1,6 +1,5 @@
 package com.example.goit.note;
 
-import com.example.goit.crudservice.CrudService;
 import com.example.goit.crudservice.ObjectNotFoundException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -8,54 +7,61 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@FieldDefaults(level = AccessLevel.PRIVATE,makeFinal = true)
-public class InMemoryNoteCrudService implements CrudService<Note> {
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class InMemoryNoteCrudService implements NoteCrudService {
     List<Note> DATA;
-    public InMemoryNoteCrudService(){
-        this(new ArrayList<>());
+
+    public InMemoryNoteCrudService() {
+        DATA = new ArrayList<>();
     }
-    public InMemoryNoteCrudService(List<Note> data){
+
+    public InMemoryNoteCrudService(List<Note> data) {
         DATA = new ArrayList<>(data);
     }
+
     @Override
     public List<Note> listAll() {
         return new ArrayList<>(DATA);
     }
+
     @Override
-    public Note add(Note note) {
-        DATA.add(note);
-        return note;
+    public Note addOrUpdate(Note noteToAdd) {
+        boolean exists = DATA.stream().anyMatch(note -> note.getId() == noteToAdd.getId());
+        if (exists) {
+            update(noteToAdd);
+        } else {
+            DATA.add(noteToAdd);
+        }
+        return noteToAdd;
     }
 
     @Override
     public void deleteById(long id) throws ObjectNotFoundException {
-        try {
-            DATA.remove(getById(id));
-        } catch (Exception ex){
-            throw new ObjectNotFoundException("DeleteById Exception");
-        }
+        DATA.remove(getById(id));
     }
 
     @Override
     public void update(Note note) throws ObjectNotFoundException {
-        try {
-            Note toUpdate = getById(note.getId());
-            toUpdate.setTitle(note.getTitle());
-            toUpdate.setContent(note.getContent());
-        } catch (Exception ex){
-            throw new ObjectNotFoundException("Update Exception");
+        if (contains(note.getId())) {
+            int index = DATA.indexOf(getById(note.getId()));
+            DATA.set(index, note);
+            return;
         }
+        throw new ObjectNotFoundException("Update Exception");
     }
 
     @Override
     public Note getById(long id) throws ObjectNotFoundException {
-        Optional<Note> toFind = DATA.stream().filter(note -> note.getId() == id).findFirst();
-        if (toFind.isPresent()){
-            return toFind.get();
+        if (!contains(id)){
+            throw new ObjectNotFoundException("GetById Exception");
         }
-        throw new ObjectNotFoundException("GetById Exception");
+        return DATA.stream().filter(note -> note.getId() == id).findFirst().get();
+    }
+
+    @Override
+    public boolean contains(long id) {
+        return DATA.stream().anyMatch(note -> note.getId() == id);
     }
 }
