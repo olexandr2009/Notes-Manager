@@ -1,7 +1,7 @@
 package com.example.goit.controller;
 
 import com.example.goit.note.Note;
-import com.example.goit.note.NoteCrudService;
+import com.example.goit.note.NoteService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,17 +16,17 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class NoteController {
-    NoteCrudService noteCrudService;
+    NoteService noteService;
 
     @GetMapping("/list")
     public ModelAndView findList(){
         ModelAndView modelAndView = new ModelAndView("noteList");
-        modelAndView.addObject("notes", noteCrudService.listAll());
+        modelAndView.addObject("notes", noteService.listAll());
         return modelAndView;
     }
-    @GetMapping("/editForm/{id}")
-    public ModelAndView editForm(@PathVariable String id){
-        noteCrudService.contains(Long.parseLong(id));
+    @GetMapping("/editForm")
+    public ModelAndView editForm(@RequestParam Long id){
+        noteService.contains(id);
         ModelAndView modelAndView = new ModelAndView("editForm");
         modelAndView.addObject("id", id);
         return modelAndView;
@@ -37,18 +37,13 @@ public class NoteController {
     }
 
     @PostMapping("/edit")
-    public RedirectView editNoteRedirect(
-            @RequestParam String id,
-            @RequestParam String title,
-            @RequestParam String content
-    ){
-        Note note = new Note(Long.parseLong(id), title, content);
-        noteCrudService.addOrUpdate(note);
+    public RedirectView editNoteRedirect(Note note){
+        noteService.addOrUpdate(note);
         return new RedirectView("/notes/list");
     }
     @PostMapping("/delete/{id}")
     public RedirectView deleteByIdRedirect(@PathVariable Long id){
-        noteCrudService.deleteById(id);
+        noteService.deleteById(id);
         return new RedirectView("/notes/list");
     }
 }

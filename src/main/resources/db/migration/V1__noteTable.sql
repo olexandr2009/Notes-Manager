@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS note (
+    id BIGINT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    content VARCHAR NOT NULL
+);
