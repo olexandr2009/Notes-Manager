@@ -26,11 +26,11 @@
             <td class="h3" id="title" th:text="${note.title}"></td>
             <td class="h4" id="content" th:text="${note.content}"></td>
             <td>
-                <form action="#" th:action="@{/notes/editForm}" method="get">
+                <form action="#" th:action="@{/V1/notes/editForm}" method="get">
                     <input type="hidden" id="id" name="id" th:value="${note.id}">
                     <input type="submit" value="Edit" class="btn btn-primary">
                 </form>
-                <form action="#" th:action="@{'/notes/delete/' + ${note.id}}" method="post">
+                <form action="#" th:action="@{'/V1/notes/delete/' + ${note.id}}" method="post">
                     <input type="submit" value="Delete" class="btn btn-primary">
                 </form>
             </td>
@@ -42,7 +42,7 @@
                 <td>-</td>
                 <td>-</td>
                 <td>
-                    <form action="#" th:action="@{/notes/addForm}" method="get">
+                    <form action="#" th:action="@{/V1/notes/addForm}" method="get">
                     <input type="submit" value="Add Note" class="btn btn-primary">
                     </form>
                 </td>

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 
-@RequestMapping("/notes")
+@RequestMapping("/V1/notes")
 @Controller
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -39,11 +39,11 @@ public class NoteController {
     @PostMapping("/edit")
     public RedirectView editNoteRedirect(Note note){
         noteService.addOrUpdate(note);
-        return new RedirectView("/notes/list");
+        return new RedirectView("/V1/notes/list");
     }
     @PostMapping("/delete/{id}")
     public RedirectView deleteByIdRedirect(@PathVariable Long id){
         noteService.deleteById(id);
-        return new RedirectView("/notes/list");
+        return new RedirectView("/V1/notes/list");
     }
 }
